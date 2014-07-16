@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	</br>
+	</br>
+	<h3>{{ single_post.title }}</h3>
+	<p>{{ single_post.text }}</p>
+	</br>
+
+<hr/>
+
+<h1>COMMENTS:</h1>
+
+<form id="postcomment" method="post" action=""> 
+	{% csrf_token %}
+		{% for hidden in form.hidden_fields %}
+	{{ hidden }}
+	{% endfor %}
+	<textarea class="form-control" rows="3" placeholder="Description" name="comment" value="" required></textarea>
+	<button class="btn btn-sm btn-primary" type="submit" name="Submit">Submit</button>
+</form>
+
+<hr/>
+
+<div id="commenters">
+
+</div>
+{% endblock content %}
