@@ -174,3 +174,8 @@ h6, .h6 {
             padding: 10px;
             margin-bottom: 10px;
         }
+
+ul
+{
+  list-style-type: none;
+}

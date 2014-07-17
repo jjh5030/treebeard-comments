@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .models import Post, Comment
 from .forms import CommentForm
 
+import datetime
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect, get_object_or_404, RequestContext
@@ -17,17 +19,12 @@ def single_post(request, post_id):
 
 	if request.method == "POST":
 		#save comment
-		comment = Comment(comment=request.POST['comment'], ) 
 		form = CommentForm(request.POST)
 		if form.is_valid():
-			# if this is a reply to a comment, not to a post 
-			if form.cleaned_data['parent'] != '': 
-				comment.parent = Comment.objects.get(id=request.POST['parent']) 
-				comment.post = single_post
-				comment.save()
-			else:
-				comment.post = single_post
-				comment.save()
+			root = Comment.add_root(post=single_post,
+				author='',
+				comment=form.cleaned_data['comment'],
+				added=datetime.datetime.now())
 
 			return HttpResponseRedirect(reverse('single_post', args=(post_id,)))
 		else:
@@ -36,7 +33,7 @@ def single_post(request, post_id):
 		form = CommentForm()
 
 	# LOAD COMMENTS
-	comments = Comment.objects.filter(post=single_post)
+	comment_tree = Comment.objects.filter(post=single_post)
 
 	#return render(request, 'post.html', context_dict)
 	return render_to_response('post.html', locals(), context_instance=RequestContext(request))	

@@ -23,7 +23,16 @@
 
 <hr/>
 
-<div id="commenters">
-
-</div>
+<ul id="commenters">
+	{% for c in comment_tree %}     
+		<li id="{{ c.id }}" class="c" style="margin-left:{{ c.depth }}em;">
+			<b>Comment:</b> {{ c.added|timesince }}<br/> 
+			<p>{{ c.comment }}</p>
+				<p><a id="reply-{{ c.id }}" href="" class="reply"><button type="button" class="btn btn-primary btn-xs">reply</button></a></p> 
+		</li>
+	{% empty %}
+<br/>
+	<p>There are currently no comments.</p>
+	{% endfor %}
+</ul>
 {% endblock content %}
