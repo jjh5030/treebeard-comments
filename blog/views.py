@@ -21,10 +21,21 @@ def single_post(request, post_id):
 		#save comment
 		form = CommentForm(request.POST)
 		if form.is_valid():
-			root = Comment.add_root(post=single_post,
-				author='',
-				comment=form.cleaned_data['comment'],
-				added=datetime.datetime.now())
+			parent = form['parent'].value()
+
+			if parent == '' or parent is None:
+				# reply to root
+				root = Comment.add_root(post=single_post,
+									    author='',
+									    comment=form.cleaned_data['comment'],
+									    added=datetime.datetime.now())
+			else:
+				# reply to comment
+				get = lambda node_id: Comment.objects.get(pk=parent)
+				node = get(parent).add_child(post=single_post,
+											 author='',
+											 comment=form.cleaned_data['comment'],
+											 added=datetime.datetime.now())
 
 			return HttpResponseRedirect(reverse('single_post', args=(post_id,)))
 		else:
